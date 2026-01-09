@@ -12,7 +12,7 @@ import json
 import os
 from datetime import datetime
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.linear_model import Lasso
 from sklearn.metrics import mean_squared_error, r2_score
 import joblib
@@ -47,7 +47,7 @@ def preprocess_data(df, test_size=0.3, random_state=42):
     print(f"Test set: {X_test.shape[0]} samples")
     
     # Feature scaling
-    scaler = StandardScaler()
+    scaler = MinMaxScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
     
