@@ -26,7 +26,7 @@ def load_data(filepath='dataset/winequality-red.csv'):
     return df
 
 
-def preprocess_data(df, test_size=0.3, random_state=42):
+def preprocess_data(df, test_size=0.2, random_state=42):
     """
     Preprocess the dataset:
     - Split features and target
