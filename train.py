@@ -61,7 +61,7 @@ def train_model(X_train, y_train):
     print("\nTraining model...")
     
     # Initialize and train model
-    model = Ridge(alpha=0.1)
+    model = Ridge(alpha=1.0)
     model.fit(X_train, y_train)
     
     print(f"Model trained: {model.__class__.__name__}")
