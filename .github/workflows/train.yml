@@ -48,8 +48,8 @@ jobs:
         echo "---" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "## Student Information" >> $GITHUB_STEP_SUMMARY
-        echo "**Name:** Your Name Here" >> $GITHUB_STEP_SUMMARY
-        echo "**Roll Number:** Your Roll Number Here" >> $GITHUB_STEP_SUMMARY
+        echo "**Name:** Gaurav Malave" >> $GITHUB_STEP_SUMMARY
+        echo "**Roll Number:** 2022BCD0017" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "---" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
