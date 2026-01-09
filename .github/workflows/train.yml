@@ -1,0 +1,87 @@
+name: Train Model
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run training script
+      id: train
+      run: |
+        python train.py | tee train_output.txt
+        
+        # Extract metrics from results.json
+        MSE=$(python -c "import json; data=json.load(open('results/results.json')); print(f\"{data['metrics']['mse']:.4f}\")")
+        R2=$(python -c "import json; data=json.load(open('results/results.json')); print(f\"{data['metrics']['r2_score']:.4f}\")")
+        RMSE=$(python -c "import json; data=json.load(open('results/results.json')); print(f\"{data['metrics']['rmse']:.4f}\")")
+        MODEL=$(python -c "import json; data=json.load(open('results/results.json')); print(data['model_type'])")
+        
+        # Set outputs
+        echo "mse=$MSE" >> $GITHUB_OUTPUT
+        echo "r2=$R2" >> $GITHUB_OUTPUT
+        echo "rmse=$RMSE" >> $GITHUB_OUTPUT
+        echo "model=$MODEL" >> $GITHUB_OUTPUT
+    
+    - name: Generate Job Summary
+      run: |
+        echo "# Model Training Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Student Information" >> $GITHUB_STEP_SUMMARY
+        echo "**Name:** Gaurav Nanasaheb Malave" >> $GITHUB_STEP_SUMMARY
+        echo "**Roll Number:** 2022BCD0017" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Evaluation Metrics" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+        echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+        echo "| **Model Type** | ${{ steps.train.outputs.model }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Mean Squared Error (MSE)** | ${{ steps.train.outputs.mse }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Root Mean Squared Error (RMSE)** | ${{ steps.train.outputs.rmse }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| **R² Score** | ${{ steps.train.outputs.r2 }} |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Artifacts" >> $GITHUB_STEP_SUMMARY
+        echo "- Trained model saved to \`models/model.pkl\`" >> $GITHUB_STEP_SUMMARY
+        echo "- Results saved to \`results/results.json\`" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Workflow Run:** \`${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "**Timestamp:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+    
+    - name: Upload trained model
+      uses: actions/upload-artifact@v3
+      with:
+        name: trained-model
+        path: models/model.pkl
+    
+    - name: Upload results
+      uses: actions/upload-artifact@v3
+      with:
+        name: evaluation-results
+        path: results/results.json
