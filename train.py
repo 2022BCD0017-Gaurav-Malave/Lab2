@@ -13,7 +13,7 @@ import os
 from datetime import datetime
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.linear_model import Ridge
+from sklearn.linear_model import Lasso
 from sklearn.metrics import mean_squared_error, r2_score
 import joblib
 
@@ -61,7 +61,7 @@ def train_model(X_train, y_train):
     print("\nTraining model...")
     
     # Initialize and train model
-    model = Ridge(alpha=1.0)
+    model = Lasso(alpha=0.1)
     model.fit(X_train, y_train)
     
     print(f"Model trained: {model.__class__.__name__}")
